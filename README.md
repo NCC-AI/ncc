@@ -1,4 +1,4 @@
-# ncc
+# ncc 🏥
 NCC-AIエンジニア自作パッケージ
 
 ## Quick glance
