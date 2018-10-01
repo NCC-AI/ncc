@@ -1,10 +1,6 @@
 # coding: utf-8
 
 # 動画を特定のフレームから特定の秒数だけ抜き出して、別のフォルダに保存するコード
-# TODO : フレームレートやコーデックも引数にする.
-# TODO : あり得ないフレーム番号を指定した時に注意文を出るようにする.
-# TODO : コマンドライン引数で実行できるようにする.
-
 import cv2
 
 
@@ -23,6 +19,8 @@ class MovieProcess:
 
     # 目的のフレーム番号から指定した秒数だけ抜き出して保存する
     def extract(self, target_frame):
+        if not 0 <= target_frame < self.video.get(cv2.CAP_PROP_FRAME_COUNT):
+            raise ValueError('frame index is invalid')
         self.video.set(1, target_frame)
         video_writer = cv2.VideoWriter(
             self.target_dir + self.movie_file.replace('.mp4', '').split('/')[-1] + '_' + str(target_frame) + '.mp4',
