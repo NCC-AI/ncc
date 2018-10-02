@@ -1,20 +1,16 @@
 # coding: utf-8
 
 # 動画を特定のフレームから特定の秒数だけ抜き出して、別のフォルダに保存するコード
-# TODO : フレームレートやコーデックも引数にする.
-# TODO : あり得ないフレーム番号を指定した時に注意文を出るようにする.
-# TODO : コマンドライン引数で実行できるようにする.
-
 import cv2
 
 
-class MovieProcess:
+class VideoProcess:
 
     # 動画保存の初期設定を行う
-    def __init__(self, movie_file, target_dir, duration_second):
-        self.movie_file = movie_file
+    def __init__(self, video_file, target_dir, duration_second):
+        self.video_file = video_file
         self.target_dir = target_dir
-        self.video = cv2.VideoCapture(movie_file)
+        self.video = cv2.VideoCapture(video_file)
         self.fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
         self.frame_width = self.video.get(cv2.CAP_PROP_FRAME_WIDTH)
         self.frame_height = self.video.get(cv2.CAP_PROP_FRAME_HEIGHT)
@@ -23,9 +19,11 @@ class MovieProcess:
 
     # 目的のフレーム番号から指定した秒数だけ抜き出して保存する
     def extract(self, target_frame):
+        if not 0 <= target_frame < self.video.get(cv2.CAP_PROP_FRAME_COUNT):
+            raise ValueError('frame index is invalid')
         self.video.set(1, target_frame)
         video_writer = cv2.VideoWriter(
-            self.target_dir + self.movie_file.replace('.mp4', '').split('/')[-1] + '_' + str(target_frame) + '.mp4',
+            self.target_dir + self.video_file.replace('.mp4', '').split('/')[-1] + '_' + str(target_frame) + '.mp4',
             self.fourcc,
             self.frame_rate,
             (self.frame_width, self.frame_height)
