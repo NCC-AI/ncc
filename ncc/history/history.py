@@ -2,6 +2,7 @@
 """
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 def save_history(history, result_file):
@@ -9,20 +10,13 @@ def save_history(history, result_file):
 
     # Arguments
         history: Returns of fit method.
-        result_file: Path to save as text file. 
+        result_file: Path to save as csv file. End with '.csv'.
 
     # Returns
-        Save as file.
+        Save as csv file.
     """
-
-    metrics = list(history.history.keys())
-    epochs = len(history.history[metrics[0]])
-    num_metrics = len(metrics)
-
-    with open(result_file, 'w') as txt:
-        txt.write('epoch\t' + '\t'.join([str(a) for a in metrics]) + '\n')
-        for i in range(epochs):
-            txt.write(('%d\t' + '\t'.join(['%f' for num in range(num_metrics)]) + '\n') % (tuple([i]) + tuple(history[key][i] for key in metrics)))
+    df = pd.DataFrame(history.history)
+    df.to_csv(result_file, sep=',', index_label='epoch')
 
 def get_array(files):
     """Convert file to numpy array.
@@ -34,16 +28,10 @@ def get_array(files):
         labels: Dictionary, Keys(file_path) and Values(metrics name).
         values: Dictionary, Keys(file_path) and Values(metrics value).
     """
-
     labels, values = {}, {}
     for file in files:
-        with open(file, 'r') as txt:
-            lines = txt.read()
-        contents = []
-        labels[file] = lines.split('\n')[0].split('\t')
-        for line in lines.split('\n')[1:-1]:
-            contents.append(list(map(float, line.split('\t'))))
-        values[file] = np.array(contents)
+        df = pd.read_csv(file)
+        labels[file], values[file] = df.columns.tolist(), df.values
     
     return labels, values
 
@@ -68,9 +56,10 @@ def show_history(metrics='acc', average=False, *files):
                 values[key][:, column] = np.convolve(values[key][:, column], np.ones(average)/float(average), 'same')
                 values[key] = values[key][average//2:-((average//2)+1)]
         plt.plot(values[key][:, 0], values[key][:, labels[key].index(metrics)], colors[i], alpha=0.3, label=key[:-4]+' '+metrics)
-        plt.plot(values[key][:, 0], values[key][:, labels[key].index('val_'+metrics)], colors[i], alpha=0.9, label=key[:-4]+' '+'val_'+metrics)
+        if 'val_'+metrics in labels[key]:
+            plt.plot(values[key][:, 0], values[key][:, labels[key].index('val_'+metrics)], colors[i], alpha=0.9, label=key[:-4]+' '+'val_'+metrics)
 
-    plt.title('Training and validation history')
+    plt.title('History')
     plt.xlabel('Epochs')
     plt.ylabel(metrics)
     plt.legend(loc='upper right', bbox_to_anchor=(1.35, 1.00), fontsize=12)
