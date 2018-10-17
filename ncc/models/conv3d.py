@@ -1,38 +1,62 @@
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten, Conv3D, MaxPool3D, BatchNormalization
+from keras.layers import Dense, Dropout, Flatten, Conv3D, MaxPooling3D, BatchNormalization, Input
+from keras.models import Model
+
+import numpy as np
+
+from .util import inst_layers
 
 
-# Conv3D layer
+# Convolution 3D layer
 def Conv(filters=16, kernel_size=(3, 3, 3), activation='relu', input_shape=None):
     if input_shape:
-        return Conv3D(filters=filters, kernel_size=kernel_size, padding='Same', activation=activation, input_shape=input_shape)
+        return Conv3D(filters=filters,
+                      kernel_size=kernel_size,
+                      padding='same',
+                      activation=activation,
+                      input_shape=input_shape)
     else:
-        return Conv3D(filters=filters, kernel_size=kernel_size, padding='Same', activation=activation)
+        return Conv3D(filters=filters,
+                      kernel_size=kernel_size,
+                      padding='same',
+                      activation=activation)
 
 
 # Define Model
 def conv3d(input_dim, num_classes):
-    model = Sequential()
 
-    model.add(Conv(8, (3, 3, 3), input_shape=input_dim))
-    model.add(MaxPool3D())
-    model.add(Conv(16, (3, 3, 3)))
-    model.add(MaxPool3D())
-    model.add(Conv(32, (3, 3, 3)))
-    model.add(MaxPool3D())
-    model.add(Conv(64, (3, 3, 3)))
-    model.add(BatchNormalization())
-    model.add(MaxPool3D())
-    model.add(Dropout(0.25))
+    small_size = min(input_dim[:3])
+    nb_convolution = 0
 
-    model.add(Flatten())
+    while small_size > 1:
+        small_size = small_size // 2
+        nb_convolution += 1
 
-    model.add(Dense(4096, activation='relu'))
-    model.add(Dropout(0.5))
+    latent_dim = np.prod(input_dim[:3]) * (8*2**(nb_convolution-1)) // (8**nb_convolution) // 4
 
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.5))
+    layers = [
+        Conv(8, input_shape=input_dim),
+        MaxPooling3D()
+    ]
 
-    model.add(Dense(num_classes, activation='softmax'))
+    layers += [
+        [
+            Conv(8 * 2**layer_id),
+            BatchNormalization(),
+            MaxPooling3D(),
+        ]
+        for layer_id in range(1, nb_convolution)
+    ]
+
+    layers += [
+        Flatten(),
+        Dropout(0.25),
+        Dense(latent_dim, activation='relu'),
+        Dropout(0.5),
+        Dense(num_classes, activation='softmax', name='prediction')
+    ]
+
+    x_in = Input(shape=input_dim, name='input')
+    prediction = inst_layers(layers, x_in)
+    model = Model(x_in, prediction)
 
     return model
