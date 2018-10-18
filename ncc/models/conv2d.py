@@ -8,7 +8,7 @@ from .util import inst_layers
 
 def Conv(filters, kernel_size=(3, 3), activation='relu', input_shape=None):
     """
-    # Convolution 3D layer
+    # Convolution 2D layer
     """
     if input_shape:
         return Conv2D(filters=filters,
