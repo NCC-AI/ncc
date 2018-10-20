@@ -23,15 +23,15 @@ def Conv(filters, kernel_size=(3, 3), activation='relu', input_shape=None):
                       activation=activation)
 
 
-def conv2d(input_dim, num_classes):
+def Model2D(input_shape, num_classes):
     """
     # Define Model
     # Arguments
-        input_dim: (width, height, channel)
+        input_shape: (height, width, channel)
         num_classes: number of classes
     """
 
-    small_size = min(input_dim[:2])
+    small_size = min(input_shape[:2])
     nb_convolution = 0
 
     while small_size > 8:
@@ -39,7 +39,7 @@ def conv2d(input_dim, num_classes):
         nb_convolution += 1
 
     layers = [
-        Conv(8, input_shape=input_dim),
+        Conv(8, input_shape=input_shape),
         MaxPooling2D()
     ]
 
@@ -52,7 +52,7 @@ def conv2d(input_dim, num_classes):
         for layer_id in range(1, nb_convolution)
     ]
 
-    latent_dim = np.prod(input_dim[:2])  # depth * width * height
+    latent_dim = np.prod(input_shape[:2])  # depth * width * height
     latent_dim *= 8 * 2 ** (nb_convolution - 1)  # filter size at last convolution
     latent_dim //= 4 ** nb_convolution  # number of training parameters reduced with convolution
     latent_dim //= 4  # dimension reduction from flatten to dense
@@ -65,7 +65,7 @@ def conv2d(input_dim, num_classes):
         Dense(num_classes, activation='softmax', name='prediction')
     ]
 
-    x_in = Input(shape=input_dim, name='input')
+    x_in = Input(shape=input_shape, name='input')
     prediction = inst_layers(layers, x_in)
     model = Model(x_in, prediction)
 
