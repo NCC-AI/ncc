@@ -1,6 +1,7 @@
 from ncc.models import Model2D
 from ncc.history import save_history
 from ncc.preprocessing import preprocess_input
+from ncc.metrics import show_matrix
 
 from keras.datasets import mnist
 
@@ -29,3 +30,9 @@ history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=e
 # save history and model
 save_history(history)
 model.save_weights('cnn_2d_model.h5')
+
+# confusion matrix
+y_prediction = model.predict(x_test)
+y_prediction = np.argmax(y_prediction, axis=1)  # from one hot to class index
+y_test = np.argmax(y_test, axis=1)  # from one hot to class index
+show_matrix(y_test, y_prediction, [i for i in range(10)])
