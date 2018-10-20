@@ -54,19 +54,17 @@ def show_history(metrics='acc', average=False, *files):
     colors = ["b", "g", "r", "c", "m", "y", "b", "w"]
     plt.figure(figsize=(12, 8))
     for i, key in enumerate(values.keys()):
-
         if average:
             for column in range(1, values[key].shape[1]):
                 values[key][:, column] = np.convolve(values[key][:, column], np.ones(average)/float(average), 'same')
                 values[key] = values[key][average//2:-((average//2)+1)]
-
+                
         plt.plot(values[key][:, 0], values[key][:, labels[key].index(metrics)],
                  colors[i],
                  alpha=0.3,
                  label=key[:-4]+' '+metrics)
 
         if 'val_'+metrics in labels[key]:
-
             plt.plot(values[key][:, 0], values[key][:, labels[key].index('val_'+metrics)],
                      colors[i],
                      alpha=0.9,
