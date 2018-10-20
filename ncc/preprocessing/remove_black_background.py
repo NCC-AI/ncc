@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def process(img):
+def remove_black_background(img):
     h_start, h_end = get_start_end(img, 'horizontal')
     tmp_img = rm_black(img, h_start, h_end, 'horizontal')
 
@@ -31,13 +31,13 @@ def get_start_end(img, mode):
 
     start = None
     end = None
-    bound = {'horizontal': 20, 'vertical': 40}
+    min_value = 20
     for idx, pixel in enumerate(checked_seq):
-        if not np.all(pixel < bound[mode]):
+        if np.any(pixel > min_value):
             start = idx
             break
     for idx, pixel in enumerate(checked_seq[::-1]):
-        if not np.all(pixel < bound[mode]):
+        if np.any(pixel > min_value):
             if mode == 'horizontal':
                 end = shape[1] - idx
             elif mode == 'vertical':
