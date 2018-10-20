@@ -1,4 +1,4 @@
-""" Remove black line in images and save processed images.
+""" Remove black line in images
 """
 import numpy as np
 
