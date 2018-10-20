@@ -1,13 +1,10 @@
 import numpy as np
 
 
-def preprocess_input(x_array, y_array=None, one_hot=True, training=True):
+def preprocess_input(x_array, y_array=None, one_hot=True):
 
-    if len(x_array.shape) == 3:  
-        if training:  # (num_samples, height, width)
-            x_array = np.expand_dims(x_array, axis=3)  # (num_samples, height, width, 1)
-        else:  # (height, width, channel)
-            x_array = np.expand_dims(x_array, axis=0)  # (1, height, width, channel)
+    if len(x_array.shape) == 3:  # (height, width, channel)
+        x_array = np.expand_dims(x_array, axis=0)  # (1, height, width, channel)
 
     x_array = x_array.astype('float32')
     x_array /= 255
