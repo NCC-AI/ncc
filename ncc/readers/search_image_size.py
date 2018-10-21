@@ -16,10 +16,10 @@ def median_size(files):
     if len(files) > 10000:
         files = files[:10000]  # ignore large image files
 
-    width_list, height_list = [], []
+    height_list, width_list = [], []
     for file in files:
         image = cv2.imread(file)
-        width, height = image.shape[:2]
+        height, width = image.shape[:2]
         height_list.append(height)
         width_list.append(width)
     height_median = np.median(height_list)
