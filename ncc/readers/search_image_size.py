@@ -20,9 +20,9 @@ def median_size(files):
     for file in files:
         image = cv2.imread(file)
         width, height = image.shape[:2]
-        width_list.append(width)
         height_list.append(height)
-    height_median = np.median(width_list)
-    width_median = np.median(height_list)
+        width_list.append(width)
+    height_median = np.median(height_list)
+    width_median = np.median(width_list)
 
     return height_median, width_median
