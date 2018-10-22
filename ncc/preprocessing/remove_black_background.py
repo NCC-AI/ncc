@@ -59,6 +59,6 @@ def rm_black(img, start, end, mode):
         clipped_img = img[start:end, :]
 
     else:
-        raise ValueError('model is horizontal or vertical')
+        raise ValueError('mode is horizontal or vertical')
 
     return clipped_img
