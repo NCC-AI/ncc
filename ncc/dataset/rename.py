@@ -1,0 +1,56 @@
+import os
+import glob
+import xml.etree.ElementTree as ET
+
+
+def rename(dirpath, prefix):
+    """ Rename files for easy to understand.
+    # Arguments
+        dirpath: Path to the directory.
+        prefix: Prefix of new file name.
+
+    # Returns
+        New name files, 'aaa_000b.ext'. (aaa=prefix, b=serial number, .ext=extension)
+    """
+
+    names = [x for x in sorted(os.listdir(dirpath)) if not x == '.DS_Store']
+    ext = list(set([os.path.splitext(x)[1] for x in names]))
+    assert len(ext) == 1, 'It contains multiple extensions.'
+
+    new_name = str(prefix) + '_%0' + str(len(str(len(names)))) + 'd' + str.lower(ext[0])
+    for idx, name in enumerate(names, start=1):
+        os.rename(os.path.join(dirpath, name), os.path.join(dirpath, new_name) % idx)
+
+
+def rename_with_xml(xml_dir, img_dir, prefix):
+    """ Rename image files and xml files.
+    # Arguments
+        xml_dir: Path to the directory that contains xml.
+        img_dir: Path to the directory that contains image.
+        prefix: Prefix of new file name. (ex. 'pos', 'neg')
+
+    # Returns
+        New name files, 'aaa_000b.ext'. (aaa=prefix, b=serial number, .ext=extension)
+    """
+    xml_names = [x for x in sorted(os.listdir(xml_dir)) if not x == '.DS_Store']
+    img_names = [x for x in sorted(os.listdir(img_dir)) if not x == '.DS_Store']
+    xml_ext = list(set([os.path.splitext(x)[1] for x in xml_names]))
+    img_ext = list(set([os.path.splitext(x)[1] for x in img_names]))
+    assert len(xml_ext) == 1, 'Xml directory contains multiple extensions.'
+    assert len(img_ext) == 1, 'Image directory contains multiple extensions.'
+    assert len(xml_names) == len(img_names), 'Mismatch length, %d xmls with %d images.' % (len(xml_names), len(img_names))
+
+    new_img = str(prefix) + '_%0' + str(len(str(len(img_names)))) + 'd' + str.lower(img_ext[0])
+    new_xml = str(prefix) + '_%0' + str(len(str(len(xml_names)))) + 'd' + str.lower(xml_ext[0])
+ 
+    for idx, xml in enumerate(xml_names, start=1):
+        tree = ET.parse(os.path.join(xml_dir, xml))
+        root = tree.getroot()
+        img = root.find('filename').text
+        # Rename image file
+        os.rename(os.path.join(img_dir, img), os.path.join(img_dir, new_img) % idx)
+        # Rename xml tag
+        root.find('filename').text = new_img % idx
+        tree.write(os.path.join(xml_dir, xml))
+        # Rename xml file
+        os.rename(os.path.join(xml_dir, xml), os.path.join(xml_dir, new_xml) % idx)
