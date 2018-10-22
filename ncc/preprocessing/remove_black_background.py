@@ -27,7 +27,7 @@ def get_start_end(img, mode):
         checked_seq = img[:][shape[1]//2]
 
     else:
-        raise ValueError('model is horizontal or vertical')
+        raise ValueError('mode is horizontal or vertical')
 
     start = None
     end = None
