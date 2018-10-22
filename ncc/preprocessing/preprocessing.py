@@ -12,7 +12,7 @@ def preprocess_input(x_array, y_array=None, one_hot=True, num_classes=None):
     if y_array is None:
         return x_array
 
-    y_array = y_array[:, 0] if y_array.shape == (len(y_array), 1) else y_array
+    y_array = y_array.ravel()  # (num_samples, 1) => (num_samples, )
 
     if one_hot:
         if len(y_array.shape) == 1:  # (num_samples, )
