@@ -1,7 +1,53 @@
 # coding: utf-8
 
-# 動画を特定のフレームから特定の秒数だけ抜き出して、別のフォルダに保存するコード
+import os
+import sys
 import cv2
+
+
+def get_property(video_file, print_only=True):
+    """ Get video property.
+    """
+    cap = cv2.VideoCapture(video_file)
+    fps = float(cap.get(5))
+    frame_count = int(cap.get(7))
+    frame_height = int(cap.get(4))
+    frame_width = int(cap.get(3))
+
+    if print_only == True:
+        print('----- Video Property -----')
+        print('Path: ', video_file)
+        print('fps: ', fps)
+        print('frame_count: ', frame_count)
+        print('frame_height: ', frame_height)
+        print('frame_width: ', frame_width)
+    else:
+        return (fps, frame_count, frame_height, frame_width)
+
+
+def to_frames(video_file, image_dir='./frames/', image_file='%s.jpg', start=0, end=None):
+    """ Split video to frames and save as jpg files.
+    """
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
+
+    cap = cv2.VideoCapture(video_file)
+    cap.set(1, start)
+    if not end:
+        end = int(cap.get(7))
+    if start > end:
+        raise ValueError('start(args) must be larger than end(args).')
+    
+    for _ in range(start, end):
+        frame_id = int(cap.get(1))
+        flag, frame = cap.read()
+        if flag == False:
+            break
+        cv2.imwrite(os.path.join(image_dir, image_file % str(frame_id).zfill(6)), frame)
+        sys.stdout.write('\r%s%d%s%d' % ('Saving ... ', frame_id, ' / ', end))
+        sys.stdout.flush()
+    cap.release()
+    print('\nDone')
 
 
 class VideoProcess:
