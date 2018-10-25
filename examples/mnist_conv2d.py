@@ -33,7 +33,6 @@ model.save_weights('cnn_2d_model.h5')
 
 # confusion matrix
 y_prediction = model.predict(x_test)
-print(y_prediction.shape)
 y_prediction_cls = np.argmax(y_prediction, axis=1)  # from one hot to class index
 y_test_cls = np.argmax(y_test, axis=1)  # from one hot to class index
 show_matrix(y_test_cls, y_prediction_cls, [i for i in range(10)])
