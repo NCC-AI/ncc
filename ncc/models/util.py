@@ -4,10 +4,12 @@
 # layersリストの中にさらにリストがあっても、ネットワークがつながる。
 def inst_layers(layers, in_layer):
     x = in_layer
+    tensors = [in_layer]
     for layer in layers:
         if isinstance(layer, list):
             x = inst_layers(layer, x)
         else:
             x = layer(x)
+            tensors.append(x)
 
-    return x
+    return x, tensors
