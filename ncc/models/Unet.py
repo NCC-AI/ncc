@@ -29,8 +29,8 @@ def create_decoding_layer(filter_count, add_drop_layer, sequence):
 
 def Unet(input_shape, output_channel_count):
 
-    feature_map_height = input_shape[0]
-    feature_map_width = input_shape[1]
+    feature_map_height, feature_map_width = input_shape[0], input_shape[1]
+    input_height, input_width = (1, 1)
     min_size = min(input_shape[:2])
     num_layers = 0
     while min_size > 5:
@@ -38,6 +38,13 @@ def Unet(input_shape, output_channel_count):
         num_layers += 1
         feature_map_height //= 2
         feature_map_width //= 2
+        input_height *= 2
+        input_width *= 2
+
+    input_height *= feature_map_height
+    input_width *= feature_map_width
+    input_shape = (input_height, input_width, input_shape[2])
+    print('input_shape has changed to {}'.format(input_shape))
 
     x_in = Input(shape=input_shape, name='input')
 
