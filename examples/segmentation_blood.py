@@ -12,7 +12,7 @@ batch_size = 4
 
 # prepare data
 
-root_data_path = '/home/yoshiki_watanabe/Desktop/project/BloodSegmentation/data'
+root_data_path = '/home/yoshiki_watanabe/Desktop/project/BloodSegmentation/data/processed/data_all'
 label_data_path = root_data_path + '/label/*.png'
 
 label_files = glob(label_data_path)
@@ -30,13 +30,16 @@ for label_file in label_files:
 l_image = np.asarray(l_image, dtype='float32')
 
 # build model
-model, input_shape = Unet(input_shape=in_image[0].shape, output_channel_count=l_image.shape[-1])
+model, input_shape = Unet(input_shape=in_image[0].shape, output_channel_count=l_image[0].shape[-1])
 model.summary()
 
-# resize
-if input_shape != in_image[0].shape:
-    in_image = [cv2.resize(image, input_shape[:2]) for image in in_image]
-
+# crop to resized shape
+raw_shape = in_image[0].shape
+if input_shape != raw_shape:
+    crop_height = raw_shape[0] - input_shape[0]
+    crop_width = raw_shape[1] - input_shape[1]
+    in_image = [image[crop_height//2:raw_shape[0]-crop_height//2, crop_width//2:raw_shape[1]-crop_width//2] for image in in_image]
+    l_image = l_image[:, crop_height//2:raw_shape[0]-crop_height//2, crop_width//2:raw_shape[1]-crop_width//2]
 in_image = preprocess_input(np.asarray(in_image))
 print(in_image.shape, l_image.shape)
 
