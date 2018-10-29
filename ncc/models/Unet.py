@@ -93,7 +93,7 @@ def Unet(input_shape, output_channel_count):
     model = Model(x_in, segmentation)
     model.compile(optimizer='sgd', metrics=[dice_coef], loss=dice_coef_loss)
 
-    return model
+    return model, input_shape
 
 
 def dice_coef(y_true, y_pred):
