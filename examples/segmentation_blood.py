@@ -1,10 +1,12 @@
 from glob import glob
 import cv2
 import numpy as np
+from sklearn.model_selection import train_test_split
 
 from ncc.preprocessing import segmentation_input, preprocess_input
 from ncc.models import Unet
 from ncc.history import save_history
+from ncc.generators import generate_with_mask
 
 # parameters
 epochs = 30
@@ -43,6 +45,15 @@ if input_shape != raw_shape:
 in_image = preprocess_input(np.asarray(in_image))
 print(in_image.shape, l_image.shape)
 
+x_train, x_test, y_train, y_test = train_test_split(in_image, l_image, random_state=0, test_size=0.2)
+train_generator = generate_with_mask(x_train, y_train, batch_size)
+test_generator = generate_with_mask(x_test, y_test, batch_size)
+
 # train
-history = model.fit(in_image, l_image, epochs=epochs, batch_size=batch_size)
+history = model.fit_generator(train_generator,
+                              steps_per_epoch=len(x_train)//batch_size,
+                              epochs=epochs,
+                              validation_data=test_generator,
+                              validation_steps=len(x_test)//batch_size
+                              )
 save_history(history)
