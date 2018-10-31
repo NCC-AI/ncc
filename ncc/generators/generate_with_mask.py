@@ -2,13 +2,13 @@ from keras.preprocessing.image import ImageDataGenerator
 
 
 def generate_with_mask(x_in, mask, batch_size):
-    data_gen_args = dict(rotation_range=90,
-                         width_shift_range=0.3,
-                         height_shift_range=0.3,
-                         shear_range=0.1,
-                         fill_mode='reflect',
-                         horizontal_flip=True,
-                         vertical_flip=True
+    data_gen_args = dict(
+        width_shift_range=0.3,
+        height_shift_range=0.3,
+        shear_range=0.1,
+        fill_mode='reflect',
+        horizontal_flip=True,
+        vertical_flip=True
                          )
     # we create two instances with the same arguments
     image_data_gen = ImageDataGenerator(**data_gen_args)
