@@ -31,7 +31,7 @@ def get_start_end(img, mode):
 
     start = None
     end = None
-    min_value = 20
+    min_value = 1  # all black is (0, 0, 0)
     for idx, pixel in enumerate(checked_seq):
         if np.any(pixel > min_value):
             start = idx
