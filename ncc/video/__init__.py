@@ -1,1 +1,1 @@
-from .VideoProcess import VidoeProcess
+from .VideoProcess import VideoProcess
