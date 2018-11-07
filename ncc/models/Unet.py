@@ -9,7 +9,7 @@ import keras.backend as K
 from .util import inst_layers
 
 
-def create_encoding_layer(filter_count, sequence):
+def create_encoding_layer(sequence, filter_count):
     new_sequence = LeakyReLU(0.2)(sequence)
     new_sequence = ZeroPadding2D((1, 1))(new_sequence)
     new_sequence = Conv2D(filter_count, 4, strides=2)(new_sequence)
@@ -17,7 +17,7 @@ def create_encoding_layer(filter_count, sequence):
     return new_sequence
 
 
-def create_decoding_layer(filter_count, add_drop_layer, sequence):
+def create_decoding_layer(sequence, filter_count, add_drop_layer=True):
     new_sequence = Activation(activation='relu')(sequence)
     new_sequence = Conv2DTranspose(filter_count, 2, strides=2,
                                    kernel_initializer='he_uniform')(new_sequence)
@@ -65,8 +65,8 @@ def Unet(input_shape, output_channel_count):
     encoders = [encoder]
     for layer_id in range(1, num_layers):
         encoder = create_encoding_layer(
-            filter_count=8 * 2**layer_id if layer_id <= 3 else 8 * 2**3,
-            sequence=encoder
+            sequence=encoder,
+            filter_count=8 * 2**layer_id if layer_id <= 3 else 8 * 2**3
         )
         encoders.append(encoder)
 
@@ -76,9 +76,9 @@ def Unet(input_shape, output_channel_count):
     decoder = encoder
     for layer_id in range(1, num_layers):
         decoder = create_decoding_layer(
+            sequence=decoder,
             filter_count=8 * 2**(num_layers-layer_id-1) if (num_layers-layer_id) <= 3 else 8 * 2**3,
-            add_drop_layer=True if layer_id <= 3 else False,
-            sequence=decoder
+            add_drop_layer=True if layer_id <= 3 else False
         )
         decoder = concatenate([decoder, encoders[num_layers-layer_id-1]], axis=-1)
 
