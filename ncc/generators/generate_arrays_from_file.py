@@ -1,20 +1,24 @@
 import numpy as np
+import pandas as pd
 import re
 
 from keras.preprocessing.image import load_img, img_to_array
 
 
-def generate_arrays_from_annotation(annotation_data, dimension, batch_size, nb_classes, target_size):
+def generate_arrays_from_annotation(annotation_file, batch_size, nb_classes, target_size, dimension=2, nb_frames=32):
+
+    annotation_data = pd.read_csv(annotation_file).values
+    np.random.shuffle(annotation_data)
+
     while True:
 
         x, y = [], []
         i = 0
 
-        np.random.shuffle(annotation_data)
-        for index, label_feature in enumerate(annotation_data):
-            feature = _set_input_data(label_feature[0], target_size, dimension)
-            y.append(label_feature[1])
-            x.append(feature)
+        for image_path, label_index in annotation_data:
+            image = _set_input_data(image_path, target_size, dimension, nb_frames)
+            y.append(label_index)
+            x.append(image)
             i += 1
             if i == batch_size:
                 yield (np.array(x), np.eye(nb_classes)[np.array(y)])
@@ -22,10 +26,10 @@ def generate_arrays_from_annotation(annotation_data, dimension, batch_size, nb_c
                 x, y = [], []
 
 
-def _set_input_data(image_path, target_size, dimension, nb_frames=32):
+def _set_input_data(image_path, target_size, dimension, nb_frames):
     # color order: (R, G, B)
     if dimension == 2:
-        image = load_img(image_path, target_size)
+        image = load_img(image_path, target_size=target_size)
         array = img_to_array(image)
 
     # stack sequence image with index (e.g. from image-4.jpg to image-36.jpg)
