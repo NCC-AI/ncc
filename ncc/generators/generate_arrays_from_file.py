@@ -30,6 +30,7 @@ def _set_input_data(image_path, target_size, dimension, nb_frames):
     # color order: (R, G, B)
     if dimension == 2:
         image = load_img(image_path, target_size=target_size)
+
         array = img_to_array(image)
 
     # stack sequence image with index (e.g. from image-4.jpg to image-36.jpg)
