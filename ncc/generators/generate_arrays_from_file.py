@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import re
 
+from ncc.preprocessing import preprocess_input
+
 from keras.preprocessing.image import load_img, img_to_array
 
 
@@ -21,7 +23,7 @@ def generate_arrays_from_annotation(annotation_file, batch_size, nb_classes, tar
             x.append(image)
             i += 1
             if i == batch_size:
-                yield (np.array(x), np.eye(nb_classes)[np.array(y)])
+                yield (preprocess_input(np.array(x)), np.eye(nb_classes)[np.array(y)])
                 i = 0
                 x, y = [], []
 
