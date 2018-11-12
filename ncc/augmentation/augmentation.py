@@ -1,13 +1,12 @@
 # coding: utf-8
 
-import PIL.Image
-from PIL import ImageEnhance, ImageOps, ImageFilter
+from PIL import Image, ImageEnhance, ImageOps, ImageFilter
 
 import numpy as np
 from scipy.misc import imresize
 
 
-def random_crop(image, crop_size):
+def random_crop(image, crop_size, mask):
     h, w, _ = image.shape
 
     if h - crop_size[0] == 0:
@@ -25,19 +24,23 @@ def random_crop(image, crop_size):
 
     # 決めたtop, bottom, left, rightを使って画像を抜き出す
     image = image[top:bottom, left:right, :]
-    return image
+
+    if mask:
+        mask = image[top:bottom, left:right, :]
+
+    return image, mask
 
 
-def scale_augmentation(image, crop_size):
+def scale_augmentation(image, crop_size, mask):
     h, w, _ = image.shape
     scale_size_w = int(w*np.random.randint(1000, 1200)/1000)  # 1.0 ~ 1.2
     scale_size_h = int(h*np.random.randint(1000, 1200)/1000)  # 1.0 ~ 1.2
     image = imresize(image, (scale_size_h, scale_size_w))
-    image = random_crop(image, crop_size)
-    return image
+    image, mask = random_crop(image, crop_size, mask)
+    return image, mask
 
 
-def data_augmentation(image_path, crop_size=(256, 256)):
+def data_augmentation(image_path, crop_size=(256, 256), mask_array=None):
     SATURATION = np.random.rand()  # 0.0 ~ 1.0
     CONTRAST = np.random.randint(500, 1000)/1000  # 0.5 ~ 1.0
     BRIGHTNESS = np.random.randint(500, 1000)/1000  # 0.5 ~ 1.0
@@ -46,7 +49,11 @@ def data_augmentation(image_path, crop_size=(256, 256)):
     MIRROR = np.random.choice([True, False])  # True or False
     BLUR = np.random.randint(0, 1000)/1000  # 0.0 ~ 1.0
 
-    img = PIL.Image.open(image_path)
+    img = Image.open(image_path)
+    if mask_array:
+        mask_pil = Image.fromarray(np.uint8(mask_array))
+    else:
+        mask_pil = None
 
     # 彩度を変える
     saturation_converter = ImageEnhance.Color(img)
@@ -66,11 +73,21 @@ def data_augmentation(image_path, crop_size=(256, 256)):
 
     if FLIP:
         img = ImageOps.flip(img)  # 上下反転
+        if mask_pil:
+            mask_pil = ImageOps.flip(mask_pil)
+
     if MIRROR:
         img = ImageOps.mirror(img)    # 左右反転
+        if mask_pil:
+            mask_pil = ImageOps.mirror(mask_pil)
 
     img = img.filter(ImageFilter.GaussianBlur(BLUR))  # ガウシアンブラー
 
     array = np.asarray(img)
-    array = scale_augmentation(array, crop_size)
-    return array
+    if mask_pil:
+        mask = np.asarray(mask_pil)
+    else:
+        mask = None
+
+    array, mask = scale_augmentation(array, crop_size, mask)
+    return array, mask
