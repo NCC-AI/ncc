@@ -40,7 +40,7 @@ def _set_input_data(image_path, target_size, dimension, nb_frames):
 
         for frame_index in range(first_frame_index, first_frame_index + nb_frames):
             sequence_path = image_path.replace(str(first_frame_index), str(frame_index))
-            frame = load_img(sequence_path, target_size)
+            frame = load_img(sequence_path, target_size=target_size)
             array.append(img_to_array(frame))
 
         array = np.asarray(array)
