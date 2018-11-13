@@ -26,7 +26,7 @@ def random_crop(image, crop_size, mask):
     image = image[top:bottom, left:right, :]
 
     if mask:
-        mask = image[top:bottom, left:right, :]
+        mask = mask[top:bottom, left:right, :]
 
     return image, mask
 
@@ -40,7 +40,7 @@ def scale_augmentation(image, crop_size, mask):
     return image, mask
 
 
-def data_augmentation(image_path, crop_size=(256, 256), mask_array=None):
+def data_augmentation(image_array, crop_size=(256, 256), mask_array=None):
     SATURATION = np.random.rand()  # 0.0 ~ 1.0
     CONTRAST = np.random.randint(500, 1000)/1000  # 0.5 ~ 1.0
     BRIGHTNESS = np.random.randint(500, 1000)/1000  # 0.5 ~ 1.0
@@ -49,7 +49,7 @@ def data_augmentation(image_path, crop_size=(256, 256), mask_array=None):
     MIRROR = np.random.choice([True, False])  # True or False
     BLUR = np.random.randint(0, 1000)/1000  # 0.0 ~ 1.0
 
-    img = Image.open(image_path)
+    img = Image.fromarray(np.uint8(image_array))
     if mask_array:
         mask_pil = Image.fromarray(np.uint8(mask_array))
     else:
