@@ -24,7 +24,7 @@ def prepare_data(module=None, nb_image=100, annotation_file=True):
 
 
     _find_and_save_image(x_train, y_train, nb_image, names, module+'/train', annotation_file=annotation_file)
-    _find_and_save_image(x_test, y_test, nb_image, names, module'/test', annotation_file=annotation_file)
+    _find_and_save_image(x_test, y_test, nb_image, names, module+'/test', annotation_file=annotation_file)
 
     return module
 
@@ -49,6 +49,6 @@ def _find_and_save_image(images, labels, nb_image, names, phase_folder, annotati
 
     if annotation_file:
         with open(phase_folder+'_annotation.csv', 'w') as fw:
-            print(phase_folder, 'annotation file saved in data_set/annotation.csv')
+            print(phase_folder, 'annotation file saved in dataset/annotation.csv')
             writer = csv.writer(fw)
             writer.writerows(annotation)
