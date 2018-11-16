@@ -23,7 +23,7 @@ def Conv(filters, kernel_size=(3, 3), activation='relu', input_shape=None):
                       activation=activation)
 
 
-def Model2D(input_shape, num_classes):
+def Model2D(input_shape, num_classes, include_top=True):
     """
     # Define Model
     # Arguments
@@ -52,18 +52,20 @@ def Model2D(input_shape, num_classes):
         for layer_id in range(1, nb_convolution)
     ]
 
-    latent_dim = np.prod(input_shape[:2])  # depth * width * height
+    latent_dim = np.prod(input_shape[:2])  # width * height
     latent_dim *= 8 * 2 ** (nb_convolution - 1)  # filter size at last convolution
     latent_dim //= 4 ** nb_convolution  # number of training parameters reduced with convolution
     latent_dim //= 4  # dimension reduction from flatten to dense
 
-    layers += [
-        Flatten(),
-        Dropout(0.25),
-        Dense(latent_dim, activation='relu'),
-        Dropout(0.5),
-        Dense(num_classes, activation='softmax', name='prediction')
-    ]
+    if include_top:
+
+        layers += [
+            Flatten(),
+            Dropout(0.25),
+            Dense(latent_dim, activation='relu'),
+            Dropout(0.5),
+            Dense(num_classes, activation='softmax', name='prediction')
+        ]
 
     x_in = Input(shape=input_shape, name='input')
     prediction = inst_layers(layers, x_in)
