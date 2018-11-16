@@ -6,12 +6,9 @@ import numpy as np
 from keras.datasets import *
 
 
-def prepare_data(module=None, nb_image=100, annotation_file=True):
+def prepare_data(module, nb_image=100, annotation_file=True):
 
-    if module is None:
-        print('Please input dataset name' )
-
-    elif module == 'mnist':
+    if module == 'mnist':
         names = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
@@ -20,8 +17,7 @@ def prepare_data(module=None, nb_image=100, annotation_file=True):
         (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 
     else:
-        print('We don\'t prepare that dataset yet.')
-
+        raise ValueError('We don\'t prepare that dataset yet.')
 
     _find_and_save_image(x_train, y_train, nb_image, names, module+'/train', annotation_file=annotation_file)
     _find_and_save_image(x_test, y_test, nb_image, names, module+'/test', annotation_file=annotation_file)
