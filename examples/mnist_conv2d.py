@@ -2,6 +2,7 @@ from ncc.models import Model2D
 from ncc.history import save_history
 from ncc.preprocessing import preprocess_input
 from ncc.metrics import show_matrix, roc
+from ncc.callbacks import slack_logging
 
 from keras.datasets import mnist
 
@@ -10,7 +11,7 @@ import numpy as np
 # parameters
 num_classes = 10
 input_shape = (28, 28, 1)
-epochs = 1
+epochs = 3
 batch_size = 128
 
 # prepare data
@@ -25,7 +26,11 @@ print(x_train.shape, y_train.shape, x_test.shape, y_test.shape)
 model = Model2D(input_shape=input_shape, num_classes=num_classes)
 model.summary()
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['acc'])
-history = model.fit(x_train, y_train, validation_data=(x_test, y_test), epochs=epochs, batch_size=batch_size)
+history = model.fit(x_train, y_train,
+                    validation_data=(x_test, y_test),
+                    epochs=epochs,
+                    batch_size=batch_size,
+                    callbacks=[slack_logging()])
 
 # save history and model
 save_history(history)

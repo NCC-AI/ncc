@@ -2,7 +2,9 @@ from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 import numpy as np
 import itertools
+import os
 
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 def show_matrix(y_test, y_prediction, class_names):
     # Compute confusion matrix
@@ -53,4 +55,4 @@ def plot_confusion_matrix(cm, classes,
 
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    plt.tight_layout()
+    # plt.tight_layout()  # this may cause error

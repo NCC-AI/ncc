@@ -109,6 +109,6 @@ venv.bak/
 
 examples/sample_data/*
 
-# network model
+# model result
 *.h5
 *.csv
