@@ -4,30 +4,30 @@ import numpy as np
 import itertools
 import os
 
-os.environ['KMP_DUPLICATE_LIB_OK']='True'
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
-def show_matrix(y_test, y_prediction, class_names):
+
+def show_matrix(y_test, y_prediction, class_names, show_plot=True, save_file=None):
     # Compute confusion matrix
     cnf_matrix = confusion_matrix(y_test, y_prediction)
     np.set_printoptions(precision=2)
 
     # Plot non-normalized confusion matrix
-    plt.figure()
     plot_confusion_matrix(cnf_matrix, classes=class_names,
-                          title='Confusion matrix, without normalization')
+                          title='Confusion matrix, without normalization', save_file='count_'+save_file)
 
     # Plot normalized confusion matrix
-    plt.figure()
     plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
-                          title='Normalized confusion matrix')
-
-    plt.show()
+                          title='Normalized confusion matrix', save_file='normalized_'+save_file)
+    if show_plot:
+        plt.show()
 
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
                           title='Confusion matrix',
-                          cmap=plt.cm.Blues):
+                          cmap=plt.cm.Blues,
+                          save_file=None):
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
@@ -39,6 +39,7 @@ def plot_confusion_matrix(cm, classes,
         print('Confusion matrix, without normalization')
         print(cm)
 
+    plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
     plt.title(title)
     plt.colorbar()
@@ -55,4 +56,6 @@ def plot_confusion_matrix(cm, classes,
 
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    if save_file:
+        plt.savefig(save_file)
     # plt.tight_layout()  # this may cause error

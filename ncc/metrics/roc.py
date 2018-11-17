@@ -5,7 +5,7 @@ from itertools import cycle
 from scipy import interp
 
 
-def roc(y_test, y_prediction, num_classes):
+def roc(y_test, y_prediction, num_classes, show_plot=True, save_file=None):
     # Compute ROC curve and ROC area for each class
     fpr = dict()
     tpr = dict()
@@ -60,4 +60,7 @@ def roc(y_test, y_prediction, num_classes):
     plt.ylabel('True Positive Rate')
     plt.title('Some extension of Receiver operating characteristic to multi-class')
     plt.legend(loc="lower right")
-    plt.show()
+    if show_plot:
+        plt.show()
+    if save_file:
+        plt.savefig(save_file)
