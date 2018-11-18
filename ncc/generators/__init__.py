@@ -1,1 +1,2 @@
-from .generate_arrays_from_file import generate_arrays_from_file
+from .generate_arrays_from_file import generate_arrays_from_annotation
+from .generate_with_mask import generate_with_mask

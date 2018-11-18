@@ -12,9 +12,10 @@ def preprocess_input(x_array, y_array=None, one_hot=True):
     if y_array is None:
         return x_array
 
+    y_array = y_array.ravel()  # (num_samples, 1) => (num_samples, )
+
     if one_hot and len(y_array.shape) == 1:  # (num_samples, )
-        class_index = np.unique(y_array)
-        num_classes = len(class_index)
+        num_classes = np.max(y_array) + 1
         y_array = np.eye(num_classes)[y_array]  # one hot: (num_samples, num_classes)
 
     y_array = y_array.astype('float32')
