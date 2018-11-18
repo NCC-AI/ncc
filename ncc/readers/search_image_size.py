@@ -2,6 +2,7 @@ from glob import glob
 import cv2
 import numpy as np
 import pandas as pd
+import re
 
 
 def search_from_dir(target_dir):
