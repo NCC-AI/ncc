@@ -1,7 +1,7 @@
 import numpy as np
 import glob
 
-from keras.preprocessing.image import array_to_img, img_to_array, list_pictures, load_img
+from keras_preprocessing.image import array_to_img, img_to_array, list_pictures, load_img
 
 
 def get_dataset(target_dir):
