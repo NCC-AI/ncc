@@ -14,11 +14,11 @@ def show_matrix(y_test, y_prediction, class_names, show_plot=True, save_file=Non
 
     # Plot non-normalized confusion matrix
     plot_confusion_matrix(cnf_matrix, classes=class_names,
-                          title='Confusion matrix, without normalization', save_file='count_'+save_file)
+                          title='Confusion matrix, without normalization', save_file=save_file)
 
     # Plot normalized confusion matrix
     plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=True,
-                          title='Normalized confusion matrix', save_file='normalized_'+save_file)
+                          title='Normalized confusion matrix', save_file=save_file)
     if show_plot:
         plt.show()
 
@@ -57,5 +57,8 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
     if save_file:
-        plt.savefig(save_file)
+        if normalize:
+            plt.savefig('normalized_' + save_file)
+        else:
+            plt.savefig('count_' + save_file)
     # plt.tight_layout()  # this may cause error
