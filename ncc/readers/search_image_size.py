@@ -29,10 +29,11 @@ def _median_size(files):
 
     height_list, width_list = [], []
     for file in files:
-        image = cv2.imread(file)
-        height, width = image.shape[:2]
-        height_list.append(height)
-        width_list.append(width)
+        if re.search('.jpg|jpeg|bmp|png', file):
+            image = cv2.imread(file)
+            height, width = image.shape[:2]
+            height_list.append(height)
+            width_list.append(width)
     height_median = np.median(height_list).astype('int')
     width_median = np.median(width_list).astype('int')
 
