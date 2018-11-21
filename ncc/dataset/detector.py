@@ -104,9 +104,8 @@ def read_annotations(csv_path):
     """ Read annotations from the csv_reader.
     """
     with open(csv_path, 'r') as file:
-        csv_reader = csv.reader(file, delimiter=',')
         result = {}
-        for line, row in enumerate(csv_reader):
+        for line, row in enumerate(csv.reader(file, delimiter=',')):
             line += 1
             try:
                 img_file, x1, y1, x2, y2, class_name = row[:6]
