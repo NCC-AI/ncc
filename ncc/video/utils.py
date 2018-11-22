@@ -16,7 +16,7 @@ class FPS(object):
         self.fps = "FPS: ??"
         self.prev_time = timer()
 
-    def calculate(self, draw, print_only=False):
+    def calculate(self, draw, show=True):
         curr_time = timer()
         exec_time = curr_time - self.prev_time
         self.prev_time = curr_time
@@ -26,8 +26,8 @@ class FPS(object):
             self.accum_time -= 1
             self.fps = "FPS: " + str(self.curr_fps)
             self.curr_fps = 0
-        if print_only:
-            print(self.fps)
-        if draw and not print_only:
+        if draw and show:
             cv2.rectangle(draw, (0,0), (50, 17), (255,255,255), -1)
             cv2.putText(draw, self.fps, (3,10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0,0,0), 1)
+        else:
+            print(self.fps)
