@@ -26,7 +26,7 @@ class FPS(object):
             self.accum_time -= 1
             self.fps = "FPS: " + str(self.curr_fps)
             self.curr_fps = 0
-        if draw and show:
+        if show:
             cv2.rectangle(draw, (0,0), (50, 17), (255,255,255), -1)
             cv2.putText(draw, self.fps, (3,10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0,0,0), 1)
         else:
