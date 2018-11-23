@@ -40,8 +40,9 @@ def _find_and_save_image(images, labels, nb_image, names, phase_folder, annotati
 
         for i, image in enumerate(cls_image[:nb_image]):
             file_path = os.path.join(save_dir, str(i) + '.png')
-            cv2.imwrite(file_path, image)
-            annotation.append([file_path, class_index])
+            abs_path = os.path.abspath(file_path)
+            cv2.imwrite(abs_path, image)
+            annotation.append([abs_path, class_index])
 
     if annotation_file:
         with open(phase_folder+'_annotation.csv', 'w') as fw:
