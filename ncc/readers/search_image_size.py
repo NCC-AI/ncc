@@ -3,14 +3,14 @@ import cv2
 import numpy as np
 import pandas as pd
 import re
-
+from PIL import Image
 
 def search_from_dir(target_dir):
     files = []
-    for image_suffix in ['jpg', 'png', 'jpeg', 'JPG', 'PNG', 'JPEG']:
+    for image_suffix in ['jpg', 'png', 'jpeg']:
         image_paths = target_dir + '/*/*/*.' + image_suffix  # target_dir/train(test)/class_name/*.jpg
         files += glob(image_paths)
-
+    print(files)
     return _median_size(files)
 
 
@@ -30,9 +30,9 @@ def _median_size(files):
 
     height_list, width_list = [], []
     for file in files:
-        if re.search('.jpg|jpeg|bmp|png', file):
-            image = cv2.imread(file)
-            height, width = image.shape[:2]
+        if re.search('.jpg|jpeg|bmp|png|JPG|JPEG|BMP|PNG|', file):
+            image = Image.open(file)
+            width, height = image.size[:2]
             height_list.append(height)
             width_list.append(width)
     height_median = np.median(height_list).astype('int')

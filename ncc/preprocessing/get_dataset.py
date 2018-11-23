@@ -5,7 +5,7 @@ from PIL import Image
 from keras_preprocessing.image import array_to_img, img_to_array, list_pictures, load_img
 from ncc.readers.search_image_size import search_from_dir
 
-def get_dataset(target_dir):
+def get_dataset(target_dir, interpolation):
     # get dataset from target_dir
     file_list = glob.glob(target_dir + '/*/')
     # image load
@@ -14,9 +14,8 @@ def get_dataset(target_dir):
 
     for class_index, folder_name in enumerate(file_list):
         for picture in list_pictures(folder_name):
-            img = load_img(picture) #img type = PIL.image
-            img_resize = img.resize((width_median ,height_median), Image.LANCZOS) #Image.resize((width, height),Filter_type)
-            img_array = img_to_array(img_resize) #np.array
+            img = load_img(picture,target_size=(width_median ,height_median),interpolation=interpolation) #img type = PIL.image
+            img_array = img_to_array(img) #np.array
             x_array.append(img_array) # input image
             y_array.append(class_index) # label
 
