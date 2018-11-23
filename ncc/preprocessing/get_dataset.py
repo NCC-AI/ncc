@@ -5,7 +5,7 @@ from PIL import Image
 from keras_preprocessing.image import array_to_img, img_to_array, list_pictures, load_img
 from ncc.readers.search_image_size import search_from_dir
 
-def get_dataset(target_dir, interpolation):
+def get_dataset(target_dir, interpolation): #target_dir/train(or test)/class_name/*.jpg
     # get dataset from target_dir
     file_list = glob.glob(target_dir + '/*/')
     # image load
