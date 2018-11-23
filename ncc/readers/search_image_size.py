@@ -10,7 +10,6 @@ def search_from_dir(target_dir):
     for image_suffix in ['jpg', 'png', 'jpeg']:
         image_paths = target_dir + '/*/*/*.' + image_suffix  # target_dir/train(test)/class_name/*.jpg
         files += glob(image_paths)
-    print(files)
     return _median_size(files)
 
 
