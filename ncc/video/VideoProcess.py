@@ -3,19 +3,36 @@
 import os
 import sys
 import cv2
-
+from threading import Thread
+from timeit import default_timer as timer
 
 class VideoProcess:
 
     # 動画保存の初期設定を行う
-    def __init__(self, video_file):
-        self.video_file = video_file
-        self.video = cv2.VideoCapture(video_file)
-        self.fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+    def __init__(self, src):
+        self.src = src
+        self.video = cv2.VideoCapture(src)
+        (self.grabbed, self.frame) = self.video.read()
+        self.stopped = False
+        self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
         self.frame_width = self.video.get(cv2.CAP_PROP_FRAME_WIDTH)
         self.frame_height = self.video.get(cv2.CAP_PROP_FRAME_HEIGHT)
         self.frame_rate = self.video.get(cv2.CAP_PROP_FPS)
         self.frame_count = self.video.get(cv2.CAP_PROP_FRAME_COUNT)
+
+    def start(self):    
+        Thread(target=self.get, args=()).start()
+        return self
+
+    def get(self):
+        while not self.stopped:
+            if not self.grabbed:
+                self.stop()
+            else:
+                (self.grabbed, self.frame) = self.video.read()
+
+    def stop(self):
+        self.stopped = True
 
     # 目的のフレーム番号から指定した秒数だけ抜き出して保存する
     def extract(self, save_dir, target_frame, duration_second):
@@ -23,7 +40,7 @@ class VideoProcess:
             raise ValueError('frame index is invalid')
         self.video.set(1, target_frame)
         video_writer = cv2.VideoWriter(
-            save_dir + self.video_file.replace('.mp4', '').split('/')[-1] + '_' + str(target_frame) + '.mp4',
+            save_dir + self.src.replace('.avi', '').split('/')[-1] + '_' + str(target_frame) + '.avi',
             self.fourcc,
             self.frame_rate,
             (self.frame_width, self.frame_height)
@@ -60,7 +77,7 @@ class VideoProcess:
     @property
     def properties(self):
         print('----- Video Properties -----')
-        print('Path: ', self.video_file)
+        print('Path: ', self.src)
         print('fps: ', self.frame_rate)
         print('frame_count: ', self.frame_count)
         print('frame_height: ', self.frame_height)
