@@ -6,6 +6,7 @@ import cv2
 from threading import Thread
 from timeit import default_timer as timer
 
+
 class VideoProcess:
 
     # 動画保存の初期設定を行う
@@ -84,3 +85,44 @@ class VideoProcess:
         print('frame_width: ', self.frame_width)
 
         return self.frame_rate, self.frame_count, self.frame_height, self.frame_width
+
+class VideoShow:
+
+    def __init__(self, draw, frame=None):
+        self.frame = frame
+        self.show_frame = frame
+        self.draw = draw
+        self.stopped = False
+
+    def start(self):
+        Thread(target=self.show, args=()).start()
+        return self
+
+    def show(self):
+        self.show_frame = self.draw(self.frame)
+
+    def stop(self):
+        self.stopped = True
+
+def threadVideoShow(draw, source=0):
+
+    video_getter = VideoProcess(source).start()
+    video_shower = VideoShow(draw, video_getter.frame).start()
+
+    while True:
+        if (cv2.waitKey(1) == ord("q")) or video_getter.stopped:
+            video_getter.stop()
+            break
+
+        cv2.imshow("Video", video_shower.show_frame)
+        video_shower.frame = video_getter.frame
+
+"""Example
+
+def resize(frame):
+    size = (256, 256)
+    return cv2.resize(img, size)
+
+threadVideoShow(resize, 'test.avi')
+
+"""
