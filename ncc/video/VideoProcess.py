@@ -4,7 +4,6 @@ import os
 import sys
 import cv2
 from threading import Thread
-from timeit import default_timer as timer
 
 class VideoProcess:
 
