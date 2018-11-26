@@ -104,39 +104,57 @@ def read_annotations(csv_path):
     """ Read annotations from the csv_reader.
     """
     with open(csv_path, 'r') as file:
-        result = {}
+        gt = {}
         for line, row in enumerate(csv.reader(file, delimiter=',')):
             line += 1
             try:
                 img_file, x1, y1, x2, y2, class_name = row[:6]
             except ValueError:
                 raise_from(ValueError('line {}: format should be \'img_file,x1,y1,x2,y2,class_name\' or \'img_file,,,,,\''.format(line)), None)
-            if img_file not in result:
-                result[img_file] = []
+            if img_file not in gt:
+                gt[img_file] = []
             if (x1, y1, x2, y2, class_name) == ('', '', '', '', ''):
                 continue
-            result[img_file].append({'x1': int(x1), 'x2': int(x2), 'y1': int(y1), 'y2': int(y2), 'class': class_name})
-    return result
+            gt[img_file].append({'x1': int(x1), 'x2': int(x2), 'y1': int(y1), 'y2': int(y2), 'class': class_name})
+    return gt
 
 
-def display_images(csv_path, imgs_path=None, show_bbox=True, num=1):
+def display_images(csv_path, imgs_path=None, class_name=None, class_count=0, show_bbox=True, num=1):
     """ Display the given set of images.
     imgs_path: list of image pathes.
+    class_name: class you want to display.
+    class_count: number of appearance of class to an image.
     """
-    result = read_annotations(csv_path)
+    gt = read_annotations(csv_path)
     if not imgs_path:
-        imgs_path = list(result.keys())
+        imgs_path = list(gt.keys())
     if not type(imgs_path) is list:
         imgs_path = [imgs_path]
         num = len(imgs_path)
     random.shuffle(imgs_path)
+
+    if class_name:
+        new_imgs_path = []
+        count = 0
+        for img_path in imgs_path:
+            class_names = []
+            values = gt[img_path]
+            for value in values:
+                class_names.append(value['class'])
+            if class_names.count(class_name) > class_count:
+                new_imgs_path.append(img_path)
+                count += 1
+            if count == num:
+                break
+        imgs_path = new_imgs_path
+
     for idx, img_path in enumerate(imgs_path[:num], 1):
         print('No.'+str(idx)+': '+img_path)
         plt.figure(figsize=(12, 12))
         plt.imshow(imread(img_path))
         ax = plt.gca()
         if show_bbox:
-            for data in result[img_path]:
+            for data in gt[img_path]:
                 x1, x2, y1, y2, class_name = data['x1'], data['x2'], data['y1'], data['y2'], data['class']
                 ax.text(x1, y1, class_name, bbox={'facecolor':'red', 'alpha':0.5})
                 ax.add_patch(plt.Rectangle((x1, y1), x2-x1, y2-y1, fill=False, edgecolor='red', linewidth=2))
