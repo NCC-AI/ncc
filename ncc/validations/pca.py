@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 
 def pca(model, images, labels, layer_id=-2):
     # layer_id = -2 , which means just before final output
-    get_3rd_layer_output = k.function([model.layers[0].input, k.learning_phase()],
+    get_fc_layer_output = k.function([model.layers[0].input, k.learning_phase()],
                                     [model.layers[layer_id].output])
 
     # output in test mode = 0
-    features = get_3rd_layer_output([images, 0])[0]
+    features = get_fc_layer_output([images, 0])[0]
 
     pca = PCA(n_components=2)
     pca.fit(features)
