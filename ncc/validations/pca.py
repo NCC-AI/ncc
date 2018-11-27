@@ -17,7 +17,9 @@ def pca(model, images, labels, layer_id=-2):
     transformed = pca.fit_transform(features)
 
     # Plot the main componet
+    plt.figure()
     plt.scatter(transformed[:, 0], transformed[:, 1], c=labels)
+    plt.colorbar()
     plt.title('principal component')
     plt.xlabel('pc1')
     plt.ylabel('pc2')
