@@ -5,7 +5,7 @@
 import matplotlib.pyplot as plt
 
 
-def plot_history(history):
+def plot_history(history, filename=None):
     # 精度の履歴をプロット
     if 'acc' in history.history:
         plt.plot(history.history['acc'], "o-", label="accuracy")
@@ -16,6 +16,8 @@ def plot_history(history):
         plt.ylabel('accuracy')
         plt.ylim([0, 1.05])
         plt.legend(loc="lower right")
+        if filename:
+            plt.savefig(filename + '_acc.png')
         plt.show()
 
     # 損失の履歴をプロット
@@ -27,4 +29,6 @@ def plot_history(history):
         plt.xlabel('epoch')
         plt.ylabel('loss')
         plt.legend(loc='lower right')
+        if filename:
+            plt.savefig(filename + '_loss.png')
         plt.show()
