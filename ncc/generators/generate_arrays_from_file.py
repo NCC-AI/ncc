@@ -7,10 +7,11 @@ from ncc.preprocessing import preprocess_input
 from keras.preprocessing.image import load_img, img_to_array
 
 
-def generate_arrays_from_annotation(annotation_file, batch_size, nb_classes, target_size, dimension=2, nb_frames=32):
+def generate_arrays_from_annotation(annotation_file, batch_size, nb_classes, target_size, dimension=2, nb_frames=32, training=True):
 
     annotation_data = pd.read_csv(annotation_file).values
-    np.random.shuffle(annotation_data)
+    if training:
+        np.random.shuffle(annotation_data)
 
     while True:
 
