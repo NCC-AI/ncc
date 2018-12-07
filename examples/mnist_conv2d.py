@@ -3,7 +3,7 @@ from ncc.history import save_history
 from ncc.preprocessing import preprocess_input
 from ncc.metrics import show_matrix, roc
 from ncc.callbacks import slack_logging
-from ncc.validations import pca
+from ncc.validations import confusion_visualize, pca
 
 from keras.datasets import mnist
 
@@ -37,10 +37,11 @@ history = model.fit(x_train, y_train,
 save_history(history)
 model.save_weights('cnn_2d_model.h5')
 
-# confusion matrix
+# visualization
 y_prediction = model.predict(x_test)
 y_prediction_cls = np.argmax(y_prediction, axis=1)  # from one hot to class index
 y_test_cls = np.argmax(y_test, axis=1)  # from one hot to class index
 show_matrix(y_test_cls, y_prediction_cls, [i for i in range(10)], show_plot=False, save_file='confusion_matrix')
 roc(y_test, y_prediction, 10, show_plot=False, save_file='roc')
+confusion_visualize(x_test, y_test_cls, model, [i for i in range(10)])
 pca(model, x_test, y_test_cls)
