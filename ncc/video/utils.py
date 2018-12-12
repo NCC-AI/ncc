@@ -27,7 +27,7 @@ class FPS(object):
             self.fps = "FPS: " + str(self.curr_fps)
             self.curr_fps = 0
         if show:
-            cv2.rectangle(draw, (0,0), (50, 17), (255,255,255), -1)
-            cv2.putText(draw, self.fps, (3,10), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0,0,0), 1)
+            cv2.rectangle(draw, (0,0), (60,20), (255,255,255), -1)
+            cv2.putText(draw, self.fps, (3,13), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0,0,0), 1)
         else:
             print(self.fps)
