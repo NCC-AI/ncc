@@ -1,4 +1,5 @@
 import colorsys
+from palette import palettes
 import numpy as np
 import random
 
@@ -27,3 +28,9 @@ def apply_mask(image, mask, color, alpha=0.5):
                                   (1 - alpha) + alpha * color[c] * 255,
                                   image[:, :, c])
     return image
+
+
+def convert_to_palette(numpy_image):
+    pil_palette = Image.fromarray(np.uint8(numpy_image), mode="P")
+    pil_palette.putpalette(palettes)
+    return pil_palette
