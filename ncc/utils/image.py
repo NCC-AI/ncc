@@ -1,5 +1,5 @@
 import colorsys
-from palette import palettes
+from .palette import palettes
 import numpy as np
 import random
 
