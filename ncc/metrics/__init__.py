@@ -3,3 +3,4 @@ from .precision import precision
 from .recall import recall
 from .show_matrix import show_matrix
 from .roc import roc
+from .segmentation_metrics import *
