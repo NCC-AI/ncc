@@ -108,6 +108,7 @@ venv.bak/
 *.DS_Store
 
 examples/sample_data/*
+examples/*.png
 
 # model result
 *.h5

@@ -4,8 +4,7 @@ import requests
 from keras.callbacks import LambdaCallback
 
 
-def slack_logging():
-    url = 'https://hooks.slack.com/services/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'
+def slack_logging(url):
 
     slack_logging_callback = LambdaCallback(
         on_epoch_end=lambda epoch, logs: requests.post(
@@ -16,7 +15,7 @@ def slack_logging():
                     attachments=[
                         dict(
                             fields=[
-                                dict(value=json.dumps(dict(logs)))
+                                dict(value='epoch: %d' % epoch + json.dumps(dict(logs)))
                             ]
                         )
                     ]
