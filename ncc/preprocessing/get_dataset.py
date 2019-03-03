@@ -1,23 +1,40 @@
 import numpy as np
-import glob
+from glob import glob
+import os
 
-from keras_preprocessing.image import img_to_array, list_pictures, load_img
+from keras_preprocessing.image import img_to_array, load_img
 from ncc.readers.search_image_size import search_from_dir
 
-def get_dataset(target_dir, interpolation='nearest'): #target_dir/class_name/*.jpg
+
+def get_dataset(target_dir, interpolation='nearest'):  # target_dir/class_name/*.jpg
     # get dataset from target_dir
-    file_list = glob.glob(target_dir + '/*/')
-    # image load
-    x_array, y_array = [], []
-    height_median, width_median = search_from_dir(target_dir) #get median size
+    image_files, labels = list_files(target_dir)
+    height_median, width_median = search_from_dir(target_dir)  # get median size
+    images = list()
+    for image_file in enumerate(image_files):
+        img = load_img(image_file, target_size=(width_median, height_median), interpolation=interpolation)
+        img_array = img_to_array(img)
+        images.append(img_array)
 
-    for class_index, folder_name in enumerate(file_list):
-        for picture in list_pictures(folder_name):
-            img = load_img(picture,target_size=(width_median ,height_median),interpolation=interpolation) #img type = PIL.image
-            img_array = img_to_array(img) #np.array
-            x_array.append(img_array) # input image
-            y_array.append(class_index) # label
+    images = np.asarray(images)
+    labels = np.asarray(labels, dtype=np.uint8)
+    return images, labels
 
-    x_array = np.asarray(x_array)
-    y_array = np.asarray(y_array)
-    return x_array, y_array
+
+def list_files(data_dir):
+    """
+    :param data_dir: this directory contains category directories
+                    (data_dir/class_name/*.jpg)
+    :return: file paths , label index
+    """
+    image_files = list()
+    labels = list()
+    class_names = os.listdir(data_dir)
+    for class_id, class_name in enumerate(class_names):
+        class_dir = os.path.join(data_dir + class_name)
+        for image_ex in ['*.jpg', '*.png']:
+            class_files = glob(os.path.join(class_dir, image_ex))
+            image_files += class_files
+            labels += [class_id for _ in range(len(class_files))]
+
+    return image_files, labels
