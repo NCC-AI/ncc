@@ -11,7 +11,7 @@ def get_dataset(target_dir, interpolation='nearest'):  # target_dir/class_name/*
     image_files, labels = list_files(target_dir)
     height_median, width_median = search_from_dir(target_dir)  # get median size
     images = list()
-    for image_file in enumerate(image_files):
+    for image_file in image_files:
         img = load_img(image_file, target_size=(width_median, height_median), interpolation=interpolation)
         img_array = img_to_array(img)
         images.append(img_array)
@@ -31,7 +31,7 @@ def list_files(data_dir):
     labels = list()
     class_names = os.listdir(data_dir)
     for class_id, class_name in enumerate(class_names):
-        class_dir = os.path.join(data_dir + class_name)
+        class_dir = os.path.join(data_dir, class_name)
         for image_ex in ['*.jpg', '*.png']:
             class_files = glob(os.path.join(class_dir, image_ex))
             image_files += class_files
