@@ -2,11 +2,11 @@ import os
 from glob import glob
 
 
-def list_files(data_dir):
+def list_classification_files(data_dir):
     """
     :param data_dir: this directory contains category directories
                     (data_dir/class_name/*.jpg)
-    :return: file paths , label index
+    :return: [file path, label index]
     """
     image_files = list()
     labels = list()
@@ -19,6 +19,26 @@ def list_files(data_dir):
             labels += [class_id for _ in range(len(class_files))]
 
     annotation_set = [[image_file, label] for image_file, label in zip(image_files, labels)]
+
+    return annotation_set
+
+
+def list_segmentation_files(data_dir, image_dir, label_dir):
+    """
+    list raw image file path and mask file path
+    :param data_dir: data_dir/(images or labels)/image_file
+    :param image_dir
+    :param label_dir
+    :return: [image_file_path, label_file_path]
+    """
+    image_files = list()
+    for image_ex in ['png', 'jpg']:
+        image_path_format = '{}/{}/*.{}'.format(data_dir, image_dir, image_ex)
+        image_files += glob(image_path_format)
+
+    image_dir_path = '/%s/' % image_dir
+    label_dir_path = '/%s/' % label_dir
+    annotation_set = [[image_file, image_file.replace(image_dir_path, label_dir_path)] for image_file in image_files]
 
     return annotation_set
 
@@ -37,8 +57,31 @@ def classification_set(target_dir, train_dirs, test_dirs):
     data_dirs = os.listdir(target_dir)
     for data_dir in data_dirs:
         if data_dir in train_dirs:
-            train_set += list_files(os.path.join(target_dir, data_dir))
+            train_set += list_classification_files(os.path.join(target_dir, data_dir))
         elif data_dir in test_dirs:
-            test_set += list_files(os.path.join(target_dir, data_dir))
+            test_set += list_classification_files(os.path.join(target_dir, data_dir))
+
+    return train_set, test_set
+
+
+def segmentation_set(target_dir, train_dirs, test_dirs, image_dir='images', label_dir='labels'):
+    """
+    collect annotation files in target dir (target_dir/data_dir/class_dir/image_file)
+    :param target_dir: root path that contains data set
+    :param train_dirs: directory list used for train data
+    :param test_dirs: directory list used for test data
+    :param image_dir: raw image directory name
+    :param label_dir: mask image directory name
+    :return: train_set: [image_file_path, label_file_path]
+             test_set: [image_file_path, label_file_path]
+    """
+    train_set, test_set = list(), list()
+
+    data_dirs = os.listdir(target_dir)
+    for data_dir in data_dirs:
+        if data_dir in train_dirs:
+            train_set += list_segmentation_files(os.path.join(target_dir, data_dir), image_dir, label_dir)
+        elif data_dir in test_dirs:
+            test_set += list_segmentation_files(os.path.join(target_dir, data_dir), image_dir, label_dir)
 
     return train_set, test_set
