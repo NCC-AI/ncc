@@ -38,7 +38,7 @@ def list_segmentation_files(data_dir, image_dir, label_dir):
 
     image_dir_path = '/%s/' % image_dir
     label_dir_path = '/%s/' % label_dir
-    annotation_set = [[label_file, label_file.replace(label_dir_path, image_dir_path)] for label_file in label_files]
+    annotation_set = [[label_file.replace(label_dir_path, image_dir_path), label_file] for label_file in label_files]
 
     return annotation_set
 
