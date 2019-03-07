@@ -1,5 +1,6 @@
 import os
 from glob import glob
+import csv
 
 
 def list_classification_files(data_dir):
@@ -84,4 +85,24 @@ def segmentation_set(target_dir, train_dirs, test_dirs, image_dir='images', labe
         elif data_dir in test_dirs:
             test_set += list_segmentation_files(os.path.join(target_dir, data_dir), image_dir, label_dir)
 
+    return train_set, test_set
+
+
+def data_set_from_annotation(train_annotation, test_annotation):
+    """
+    collect annotation files in target dir (target_dir/data_dir/class_dir/image_file)
+    :param train_annotation: train_annotation_csv_file
+    :param test_annotation: test_annotation_csv_file
+    :return: train_set: [image_file_path, label_idx]
+             test_set: [image_file_path, label_idx]
+    """
+    train_set, test_set = list(), list()
+    with open(train_annotation, 'r') as csv_file:
+        reader = csv.reader(csv_file)
+        for row in reader:
+            train_set.append(row)
+    with open(test_annotation, 'r') as csv_file:
+        reader = csv.reader(csv_file)
+        for row in reader:
+            test_set.append(row)
     return train_set, test_set
