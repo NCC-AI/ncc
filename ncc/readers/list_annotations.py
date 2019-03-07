@@ -31,14 +31,14 @@ def list_segmentation_files(data_dir, image_dir, label_dir):
     :param label_dir
     :return: [image_file_path, label_file_path]
     """
-    image_files = list()
+    label_files = list()
     for image_ex in ['png', 'jpg']:
-        image_path_format = '{}/{}/*.{}'.format(data_dir, image_dir, image_ex)
-        image_files += glob(image_path_format)
+        label_path_format = '{}/{}/*.{}'.format(data_dir, label_dir, image_ex)
+        label_files += glob(label_path_format)
 
     image_dir_path = '/%s/' % image_dir
     label_dir_path = '/%s/' % label_dir
-    annotation_set = [[image_file, image_file.replace(image_dir_path, label_dir_path)] for image_file in image_files]
+    annotation_set = [[label_file, label_file.replace(label_dir_path, image_dir_path)] for label_file in label_files]
 
     return annotation_set
 
